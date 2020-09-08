@@ -69,14 +69,14 @@ for iOmega = 1:nt/2
             
             temp1 = a/k* ( r(ir)*besselj(1,k*r(ir)) - r(ir-1)*besselj(1,k*r(ir-1)) );
             temp2 = b/k^2* ( k*r(ir)*besselj(0,k*r(ir)) - k*r(ir-1)*besselj(0,k*r(ir-1)) );
-            temp3 = b/k^2* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
+            %temp3 = b/k^2* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
             %temp3 = b/k^3* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
             
             fun = @(bessel) besselj(0,k*bessel);
-            temp4 = - b/k^2* integral(fun,r(ir-1),r(ir));
+            temp4 = - b/k^3* integral(fun,r(ir-1),r(ir));
             
             % sometimes negative?
-            temp = temp1 + temp2 + temp3 + temp4;
+            temp = temp1 + temp2  + temp4;
            
            
                 
