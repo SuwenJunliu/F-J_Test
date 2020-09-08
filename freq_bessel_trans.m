@@ -1,4 +1,4 @@
-function [I,f] = freq_bessel_trans(C,r,t,v)
+function [I,f] = freq_bessel_trans(C,r,t,v,r0)
 %% transform (x-t) data into F-J data
 
 %input: C       the cross-correlation result of station pair
@@ -7,16 +7,29 @@ function [I,f] = freq_bessel_trans(C,r,t,v)
 %               length: nx
 %       t       the vector of time series, length:nt
 %       v       the vector of velocity, length:nv
+%       r0      the vector of C_r0 , length:nt
 
 %output I       the omega-k result matrix. same size of C
 
-% written by junliu 2020/9/4 @ IGGCAS
+% written by junliu  @ IGGCAS
+
+% try to fix C_r0 ?
 
 
 %% 
-
 nx = length(r);
 nt = length(t);
+
+new_r = zeros(1,nx+1);
+new_r(2:end) = r;
+r = new_r;
+
+new_C = zeros(nt,nx+1);
+new_C(:,1) = r0;
+new_C(:,2:end) = C ;
+C = new_C;
+
+
 nv = length(v);
 I = zeros(nt,nv);
 pi = 3.1415927;
@@ -42,14 +55,17 @@ f = inum /dt/nt;
 % when j = 1, what on earth C_r0 is ?
 % For cross-correlation data, it might be the auto-correlation ?
 % but for real data ?
+
+
+
 for iOmega = 1:nt
     for iv = 1:nv
         temp = 0;
-        for ir = 2:nx
+        for ir = 2:nx+1
             k = omega(iOmega) / v(iv);
             b = ((fft_C(iOmega,ir)-fft_C(iOmega,ir-1))/(r(ir)-r(ir-1)));
             a = fft_C(iOmega,ir-1) - r(ir-1) * b;
-            
+           
             temp1 = a/k* ( r(ir)*besselj(1,k*r(ir)) - r(ir-1)*besselj(1,k*r(ir-1)) );
             temp2 = b/k^2* ( k*r(ir)^2*besselj(1,k*r(ir)) - k*r(ir-1)^2*besselj(1,k*r(ir-1)) );
             temp3 = b/k^2* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
@@ -59,6 +75,8 @@ for iOmega = 1:nt
             
             % sometimes negative?
             temp = temp1 + temp2 + temp3 + temp4;
+           
+           
                 
             
         end
