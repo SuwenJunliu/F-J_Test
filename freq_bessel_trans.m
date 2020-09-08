@@ -35,6 +35,13 @@ f = inum /dt/nt;
 
 % this part base on "背景噪音提取高阶频散曲线的矢量波数变换方法" cnki
 
+
+% In fact, there is still a problem about r_0
+% According to the doi:10.1029/2018JB016595 
+% b_j = [C (r_j) ? C(r_(j-1)) ]∕ Δr_j
+% when j = 1, what on earth C_r0 is ?
+% For cross-correlation data, it might be the auto-correlation ?
+% but for real data ?
 for iOmega = 1:nt
     for iv = 1:nv
         temp = 0;
