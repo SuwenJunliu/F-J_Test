@@ -31,8 +31,10 @@ nt = length(t);
 
 
 nv = length(v);
-I = zeros(nt,nv);
+I = zeros(nv,nt);
 pi = 3.1415927;
+%fft_C_amp = abs(fft(C));
+%fft_C = fft(C)./fft_C_amp;
 fft_C = fft(C);
 % complex number?
 dt = abs(t(2) - t(1));
@@ -82,9 +84,10 @@ for iOmega = 1:nt/2
                 
             
         end
-        I(iOmega,iv) = temp;
+        I(iv,iOmega) = temp;
         
     end
+    I(:,iOmega) = abs(I(:,iOmega)./max(abs(I(:,iOmega))));
     disp(['omega ' , num2str((iOmega/nt)*100),'%'])
 end
    
