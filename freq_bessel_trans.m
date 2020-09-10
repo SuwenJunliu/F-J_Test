@@ -53,7 +53,7 @@ f = inum /dt/nt;
 
 % In fact, there is still a problem about r_0
 % According to the doi:10.1029/2018JB016595 
-% b_j = [C (r_j) ? C(r_(j-1)) ]¨M ¦¤r_j
+% b_j = [C (r_j) - C(r_(j-1)) ]¨M ¦¤r_j
 % when j = 1, what on earth C_r0 is ?
 % For cross-correlation data, it might be the auto-correlation ?
 % but for real data ?
@@ -66,21 +66,22 @@ for iOmega = 1:nt/2
         for ir = 2:nx
             k = omega(iOmega) / v(iv);
             b = ((fft_C(iOmega,ir)-fft_C(iOmega,ir-1))/(r(ir)-r(ir-1)));
-            a = fft_C(iOmega,ir-1) - r(ir-1) * b;
-            %a = fft_C(iOmega,ir);
+            %a = fft_C(iOmega,ir-1) - r(ir-1) * b;
             
-            temp1 = a/k* ( r(ir)*besselj(1,k*r(ir)) - r(ir-1)*besselj(1,k*r(ir-1)) );
-            temp2 = b/k^2* ( k*r(ir)*besselj(0,k*r(ir)) - k*r(ir-1)*besselj(0,k*r(ir-1)) );
-            temp3 = b/k^2* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
-            %temp3 = b/k^3* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
+            %temp1 = a/k* ( r(ir)*besselj(0,k*r(ir)) - r(ir-1)*besselj(0,k*r(ir-1)) );
+            %temp2 = b/k* ( r(ir).^2*besselj(1,k*r(ir)) - r(ir-1).^2*besselj(1,k*r(ir-1)) );
+            %temp3 = b/k^2* ( (r(ir)*besselj(0,k*r(ir))) -r(ir-1)*besselj(0,k*r(ir-1)) );
             
             fun = @(bessel) besselj(0,k*bessel);
-            temp4 = - b/k^2* integral(fun,r(ir-1),r(ir));
+            %temp4 = - b/k^3* integral(fun,k*r(ir-1),k*r(ir));
             
-            % sometimes negative?
-            temp = temp1 + temp2 + temp3 + temp4;
+            temp1 = 1/k * ( fft_C(iOmega,ir) * r(ir) * besselj(1,k*r(ir)) - fft_C(iOmega,ir-1) * r(ir-1) * besselj(1,k*r(ir-1)));
+            temp2 = b/k.^3 * ( k*r(ir)*besselj(0,k*r(ir)) -  k*r(ir-1)*besselj(0,k*r(ir-1)));
+            temp3 = b/k.^3 * integral(fun,r(ir-1),r(ir));
+            
+            temp = temp1 + temp2 - temp3;
            
-           
+            
                 
             
         end
