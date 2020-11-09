@@ -66,7 +66,7 @@ for iOmega = 1:nt/2
         for ir = 2:nx
             k = omega(iOmega) / v(iv);
             b = ((fft_C(iOmega,ir)-fft_C(iOmega,ir-1))/(r(ir)-r(ir-1)));
-            %a = fft_C(iOmega,ir-1) - r(ir-1) * b;
+            a = fft_C(iOmega,ir-1) - r(ir-1) * b;
             
             %temp1 = a/k* ( r(ir)*besselj(0,k*r(ir)) - r(ir-1)*besselj(0,k*r(ir-1)) );
             %temp2 = b/k* ( r(ir).^2*besselj(1,k*r(ir)) - r(ir-1).^2*besselj(1,k*r(ir-1)) );
@@ -75,11 +75,13 @@ for iOmega = 1:nt/2
             fun = @(bessel) besselj(0,k*bessel);
             %temp4 = - b/k^3* integral(fun,k*r(ir-1),k*r(ir));
             
-            temp1 = 1/k * ( fft_C(iOmega,ir) * r(ir) * besselj(1,k*r(ir)) - fft_C(iOmega,ir-1) * r(ir-1) * besselj(1,k*r(ir-1)));
+            temp1 = a/k * ( fft_C(iOmega,ir) * r(ir) * besselj(1,k*r(ir)) - fft_C(iOmega,ir-1) * r(ir-1) * besselj(1,k*r(ir-1)));
+            
+            temp11 = b/k.^3 * ( (k*r(ir)).^2*besselj(1,k*r(ir)) - (k*r(ir-1)).^2*besselj(1,k*r(ir-1))  );
             temp2 = b/k.^3 * ( k*r(ir)*besselj(0,k*r(ir)) -  k*r(ir-1)*besselj(0,k*r(ir-1)));
             temp3 = b/k.^3 * integral(fun,r(ir-1),r(ir));
             
-            temp = temp1 + temp2 - temp3;
+            temp = temp1+temp11 + temp2 - temp3;
            
             
                 

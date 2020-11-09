@@ -1,4 +1,4 @@
-[E,freq,v] = PhaseShiftOfSW(Uz(:,2:end),(t(2)-t(1)),100000,2500,3500,10,5500,0.1,7);
+[E,freq,v] = PhaseShiftOfSW(seis4(:,2:end),(t(2)-t(1)),100000,2500,3500,10,5500,0.1,7);
 
 x=[freq(1) freq(end)];
 y=[v(1) v(end)];
